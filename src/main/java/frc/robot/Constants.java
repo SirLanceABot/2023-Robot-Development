@@ -102,7 +102,8 @@ public final class Constants
         public static final float ENCODER_FORWARD_SOFT_LIMIT = 380000.0f;
         public static final float ENCODER_REVERSE_SOFT_LIMIT = -6000.0f;
 
-        public static final double HIGH_CONE = 205000.0; //375000 big single suction //340000 double small suction
+        public static final double HIGH_CONE = 215000.0; //375000 big single suction //340000 double small suction // 205000
+        public static final double HIGH_CONE_LOCK = 195000.0;
         public static final double HIGH_CUBE = 218000.0;
         public static final double MIDDLE_CONE = 176000.0; //300000 big single suction //297000 double small suction
         public static final double MIDDLE_CUBE = 205000.0;
@@ -114,8 +115,8 @@ public final class Constants
         public static final double SHOULDER_READY_TO_CLAMP = 168639.2;
         public static final double CLAMP = 682.0;
         public static final double READY_TO_PICK_UP = 104740.0;
-        public static final double STARTING_POSITION = 20000.0; //42000 old
-        public static final double SUBSTATION = 225000.0;//330000 old
+        public static final double STARTING_POSITION = 32000.0; //20000.0; //42000 old
+        public static final double SUBSTATION = 230000.0;//330000 old // 225000
         public static final double LIMELIGHT = 135000.0;
     }
 
@@ -138,7 +139,7 @@ public final class Constants
         public static final double CLAMP = 292.6;
         public static final double READY_TO_PICK_UP = 0.0;
         public static final double STARTING_POSITION = 0.0;
-        public static final double SUBSTATION = 360000.0;//319000 old
+        public static final double SUBSTATION = 500000.0; //360000 //319000 old
     }
 
     public static class Grabber
@@ -150,18 +151,20 @@ public final class Constants
 
         //Vacuum Top
         public static final int GRABBER_MOTOR_TOP_PORT          = 2;
-        public static final double MAX_PRESSURE_TOP             = 0.7; //0.7
+        public static final double MAX_PRESSURE_TOP             = 0.76; //0.7
         public static final double MAX_SPEED_TOP                = -0.5; //-0.5;
         // public static final double AS_FAST_AS_POSSIBLE_TOP      = -1.000;
         public static final double TARGET_PRESSURE_TOP          = 0.71; // = -12.21625 psi
+        public static final double GAME_PIECE_ACQUIRED_TOP       = 1.1;
         public static final double MAINTAIN_SPEED_LIMIT_TOP     = -0.5; //-0.5; //RUN POWER TOP
 
         //Vacuum Bottom
         public static final int GRABBER_MOTOR_BOTTOM_PORT       = 3;
-        public static final double MAX_PRESSURE_BOTTOM          = 0.7; //0.7;
+        public static final double MAX_PRESSURE_BOTTOM          = 0.84; //0.7;
         public static final double MAX_SPEED_BOTTOM             = -0.5; //-0.5;
         // public static final double AS_FAST_AS_POSSIBLE_BOTTOM   = -1.000;
         public static final double TARGET_PRESSURE_BOTTOM       = 0.79; // = -11.34625 psi
+        public static final double GAME_PIECE_ACQUIRED_BOTTOM    = 1.1;
         public static final double MAINTAIN_SPEED_LIMIT_BOTTOM  = -0.5; //-0.5; //RUN POWER BOTTOM
 
     }
@@ -241,9 +244,9 @@ public final class Constants
         public static double DRIVETRAIN_WHEELBASE_METERS = Constants.DRIVETRAIN_WHEELBASE_METERS  ; // 23.5 Front to back
         public static double DRIVETRAIN_TRACKWIDTH_METERS = Constants.DRIVETRAIN_TRACKWIDTH_METERS ; // 23.5 // Side to side
 
-        public static final double X_ACCELERATION_RATE_LIMT = 15.0;
+        public static final double X_ACCELERATION_RATE_LIMT = 10.0;
         public static final double X_DECELERATION_RATE_LIMT = 10.0;
-        public static final double Y_ACCELERATION_RATE_LIMT = 15.0;
+        public static final double Y_ACCELERATION_RATE_LIMT = 10.0;
         public static final double Y_DECELERATION_RATE_LIMT = 10.0;
 
     }
@@ -268,7 +271,7 @@ public final class Constants
             if(Robot4237.equals("2023 Robot"))
             {
                 FRONT_LEFT_ENCODER_OFFSET   = -209.883; 
-                FRONT_RIGHT_ENCODER_OFFSET  = -133.330; 
+                FRONT_RIGHT_ENCODER_OFFSET  = -171.562; //-133.330; changed at state 
                 BACK_LEFT_ENCODER_OFFSET    = -18.809; 
                 BACK_RIGHT_ENCODER_OFFSET   = -342.422; 
             }
@@ -340,6 +343,7 @@ public final class Constants
         kMiddleCone(Constants.Shoulder.MIDDLE_CONE, Constants.Arm.MIDDLE_CONE),
         kMiddleCube(Constants.Shoulder.MIDDLE_CUBE, Constants.Arm.MIDDLE_CUBE),
         kHighCone(Constants.Shoulder.HIGH_CONE, Constants.Arm.HIGH_CONE),
+        kHighConeLock(Constants.Shoulder.HIGH_CONE_LOCK, Constants.Arm.HIGH_CONE),
         kHighCube(Constants.Shoulder.HIGH_CUBE, Constants.Arm.HIGH_CUBE),
         kClamp(Constants.Shoulder.CLAMP, Constants.Arm.CLAMP),
         kStartingPosition(Constants.Shoulder.STARTING_POSITION, Constants.Arm.STARTING_POSITION),

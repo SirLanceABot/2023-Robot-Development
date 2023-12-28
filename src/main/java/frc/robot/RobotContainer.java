@@ -44,7 +44,6 @@ import frc.robot.subsystems.Candle4237.LedStatus;
 import frc.robot.Constants.SuctionState;
 import frc.robot.Constants.TargetPosition;
 import frc.robot.commands.AlignToPost;
-import frc.robot.commands.DriveToSubstation;
 import frc.robot.commands.DriveToSubstationSensor;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoCommandList;
@@ -58,6 +57,7 @@ import frc.robot.commands.LockWheels;
 import frc.robot.commands.SuctionControl;
 import frc.robot.commands.MoveArmToScoringPosition;
 import frc.robot.commands.MoveShoulderToScoringPosition;
+import frc.robot.commands.NewDriveToSubstation;
 import frc.robot.commands.ReleaseGamePiece;
 import frc.robot.commands.RetractScorer;
 import frc.robot.commands.SwerveDrive;
@@ -140,7 +140,7 @@ public class RobotContainer
 	RobotContainer()
 	{
 		// Create the needed subsystems
-		if(useDataLog)
+		if(useFullRobot || useDataLog)
 		{
 			DataLogManager.start();
 			log = DataLogManager.getLog();
@@ -164,7 +164,7 @@ public class RobotContainer
 		operatorController 	= (useFullRobot || useOperatorController) 		? new OperatorController(Constants.Controller.OPERATOR)	: null;
 		mainShuffleboard 	= (useFullRobot || useMainShuffleboard)			? new MainShuffleboard(this)							: null;
 		vision 				= (useFullRobot || useVision)					? new Vision()											: null;
-		compressor			= (useGrabber || useWrist)						? new Compressor(0, PneumaticsModuleType.CTREPCM)		: null;
+		compressor			= (useGrabber 	|| useWrist)					? new Compressor(0, PneumaticsModuleType.CTREPCM)		: null;
 		ultrasonic			= (useFullRobot || useUltrasonic)				? new Ultrasonic4237()									: null;
 
 		// pdh = new PowerDistribution(1, ModuleType.kRev);
@@ -204,6 +204,9 @@ public class RobotContainer
 			DoubleSupplier leftYAxisCrawl = driverController.getAxisSupplier(Xbox.Axis.kLeftY, 0.15);
 			DoubleSupplier leftXAxisCrawl = driverController.getAxisSupplier(Xbox.Axis.kLeftX, 0.15);
 			DoubleSupplier rightXAxisCrawl = driverController.getAxisSupplier(Xbox.Axis.kRightX, 0.5);
+			DoubleSupplier leftYAxisCrawlCommunity = driverController.getAxisSupplier(Xbox.Axis.kLeftY, 0.25);
+			DoubleSupplier leftXAxisCrawlCommunity = driverController.getAxisSupplier(Xbox.Axis.kLeftX, 0.25);
+			DoubleSupplier rightXAxisCrawlCommunity = driverController.getAxisSupplier(Xbox.Axis.kRightX, 0.5);
 			DoubleSupplier zero = () -> 0.0;
 
 			// Start Button
@@ -263,10 +266,10 @@ public class RobotContainer
 			//Y Button
 			BooleanSupplier yButton = driverController.getButtonSupplier(Xbox.Button.kY);
 			Trigger yButtonTrigger = new Trigger(yButton);
-			if(drivetrain != null)
+			// if(drivetrain != null)
 			{
 				// yButtonTrigger.toggleOnTrue(new SwerveDriveCrawl(drivetrain, leftYAxis, leftXAxis, rightXAxis, true));
-				yButtonTrigger.toggleOnTrue(new SwerveDrive(drivetrain, leftYAxisCrawl, leftXAxisCrawl, rightXAxisCrawl, true));
+				// yButtonTrigger.toggleOnTrue(new SwerveDrive(drivetrain, leftYAxisCrawl, leftXAxisCrawl, rightXAxisCrawl, true));
 			}
 
 			//Right trigger 
@@ -282,32 +285,47 @@ public class RobotContainer
 			// //Right Bumper
 			BooleanSupplier rightBumper = driverController.getButtonSupplier(Xbox.Button.kRightBumper);
 			Trigger rightBumperTrigger = new Trigger(rightBumper);
+			if(drivetrain != null)
+			{
+				rightBumperTrigger.whileTrue(new SwerveDrive(drivetrain, leftYAxisCrawlCommunity, leftXAxisCrawlCommunity, rightXAxisCrawlCommunity, true));
+
+			}
 			
 
 			//Left trigger 
 			BooleanSupplier leftTrigger = driverController.getButtonSupplier(Xbox.Button.kLeftTrigger);
 			Trigger leftTriggerTrigger = new Trigger(leftTrigger);
-			if(drivetrain != null && gyro != null && vision != null)
-			{
-				leftTriggerTrigger.onTrue( new DriveToSubstation(drivetrain, gyro, vision));
-			}
+			// if(drivetrain != null && gyro != null && vision != null)
+			// {
+			// 	// leftTriggerTrigger.whileTrue( new NewDriveToSubstation(drivetrain, ultrasonic, leftYAxis, leftXAxis, rightXAxis, true, 0.15));
+			// }
 
 			//Left Bumper
 			BooleanSupplier leftBumper = driverController.getButtonSupplier(Xbox.Button.kLeftBumper);
 			Trigger leftBumperTrigger = new Trigger(leftBumper);
-			if(drivetrain != null && gyro != null && ultrasonic != null)
+			if(drivetrain != null)
 			{
-				leftBumperTrigger.toggleOnTrue(new DriveToSubstationSensor(drivetrain, gyro, ultrasonic));
+
+				leftBumperTrigger.whileTrue(new SwerveDrive(drivetrain, leftYAxisCrawl, leftXAxisCrawl, rightXAxisCrawl, true));
+				// leftBumperTrigger.whileTrue(
+				// 	new ConditionalCommand(
+
+				// 		new PrintCommand("Regular Swerve").andThen(
+				// 		new SwerveDrive(drivetrain, leftYAxis, leftXAxis, rightXAxis, true)),
+				// 		new PrintCommand("Crawl Swerve").andThen( 
+				// 		new SwerveDrive(drivetrain, leftYAxisCrawl, leftXAxisCrawl, rightXAxisCrawl, true)), 
+				// 		() -> ultrasonic.getDistance() > 6.0));
 				// leftBumperTrigger.toggleOnFalse(new DriveToSubstationSensor(drivetrain, gyro, ultrasonic));
 			}
+
 
 			//Dpad down button
 			BooleanSupplier dPadDown = driverController.getDpadSupplier(Xbox.Dpad.kDown);
 			Trigger dPadDownTrigger = new Trigger(dPadDown);
-			if(shoulder != null)
-			{
-				dPadDownTrigger.onTrue( new MoveShoulderToScoringPosition(shoulder, TargetPosition.kStartingPosition));
-			}
+			// if(shoulder != null)
+			// {
+			// 	dPadDownTrigger.onTrue( new MoveShoulderToScoringPosition(shoulder, TargetPosition.kStartingPosition));
+			// }
 
 			// Rumble when gamepiece has full suction
 			BooleanSupplier vacuumSuction = grabber.vacuumSuctionSupplier();
@@ -479,6 +497,10 @@ public class RobotContainer
 			// Start Button
 			BooleanSupplier startButton = operatorController.getButtonSupplier(Xbox.Button.kStart);
 			Trigger startButtonTrigger = new Trigger(startButton);
+			if(shoulder != null)
+			{
+				startButtonTrigger.onTrue( new MoveShoulderToScoringPosition(shoulder, TargetPosition.kStartingPosition));
+			}
 
 			// Start Button and dPad Up
 			Trigger startAndUpTrigger  = startButtonTrigger.and(dPadUpTrigger);
@@ -493,7 +515,14 @@ public class RobotContainer
 			Trigger startAndLeftTrigger  = startButtonTrigger.and(dPadLeftTrigger);
 			if(shoulder != null && arm != null && wrist != null && grabber != null)
 			{
-				startAndLeftTrigger.onTrue( new ExtendScorer(shoulder, arm, wrist, grabber, TargetPosition.kMiddleCube));
+				startAndLeftTrigger.onTrue(
+					new ConditionalCommand(
+						new RetractScorer(shoulder, arm, wrist, TargetPosition.kMiddleCube),
+						new ExtendScorer(shoulder, arm, wrist, grabber, TargetPosition.kMiddleCube),
+						() -> shoulder.getPosition() > TargetPosition.kMiddleCube.shoulder)
+					);
+
+				// startAndLeftTrigger.onTrue( new ExtendScorer(shoulder, arm, wrist, grabber, TargetPosition.kMiddleCube));
 
 				// startAndLeftTrigger.onTrue( new ExtendScorerCube(shoulder, arm, wrist, TargetPosition.kMiddleCube));
 			}
@@ -502,7 +531,14 @@ public class RobotContainer
 			Trigger startAndDownTrigger  = startButtonTrigger.and(dPadDownTrigger);
 			if(shoulder != null && arm != null && wrist != null && grabber != null)
 			{
-				startAndDownTrigger.onTrue( new ExtendScorer(shoulder, arm, wrist, grabber, TargetPosition.kLowCube));
+				startAndDownTrigger.onTrue(
+					new ConditionalCommand(
+						new RetractScorer(shoulder, arm, wrist, TargetPosition.kLowCube),
+						new ExtendScorer(shoulder, arm, wrist, grabber, TargetPosition.kLowCube),
+						() -> shoulder.getPosition() > TargetPosition.kLowCube.shoulder)
+					);
+
+				// startAndDownTrigger.onTrue( new ExtendScorer(shoulder, arm, wrist, grabber, TargetPosition.kLowCube));
 
 				// startAndLeftTrigger.onTrue( new ExtendScorerCube(shoulder, arm, wrist, TargetPosition.kMiddleCube));
 			}
@@ -638,6 +674,12 @@ public class RobotContainer
 			// return command;
 			return command;
 		}
+	}
+
+	public void resetRobot()
+	{
+		gyro.reset();
+		System.out.println("Gyro Reset");
 	}
 
 	

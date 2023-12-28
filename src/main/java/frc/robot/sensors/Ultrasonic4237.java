@@ -43,53 +43,80 @@ public class Ultrasonic4237 extends Sensor4237
     private class PeriodicIO
     {
         
-        private double potInFeet;
+        private double sensorVoltage;
         private double filteredMeasurement;
-        private Timer timer;
+        private double sensorDistance;
+        // private Timer timer;
     }
 
     private final AnalogInput sonarSensor = new AnalogInput(0);
-    private final AnalogPotentiometer pot = new AnalogPotentiometer(sonarSensor, 5000, 0);
-    final int kUltrasonicPingPort = 2;
-    final int kUltrasonicEchoPort = 1;
+    // private final AnalogPotentiometer pot = new AnalogPotentiometer(sonarSensor, 5000, 0);
+    
+    
+    // final int kUltrasonicPingPort = 2;
+    // final int kUltrasonicEchoPort = 1;
     private final MedianFilter m_filter = new MedianFilter(5);
     private final PeriodicIO periodicIO = new PeriodicIO();
-    
+    private boolean skipChecker = false; 
 
     public Ultrasonic4237()
     {
-        periodicIO.timer = new Timer();
-        startTimer();
+        // periodicIO.timer = new Timer();
+        // startTimer();
+        periodicIO.sensorDistance = calculateDistance();
     }
 
-    public void startTimer()
-    {
-        periodicIO.timer.start();
-    }
+    // public void startTimer()
+    // {
+    //     periodicIO.timer.start();
+    // }
 
-    public double getPotentiometer()
+    private double calculateDistance()
     {
-        
-        periodicIO.filteredMeasurement = m_filter.calculate(pot.get() /304.8);
+        var voltSensor = sonarSensor.getVoltage();
+        SmartDashboard.putNumber("Sensor Voltage", voltSensor);
+        var voltsPerCM = edu.wpi.first.wpilibj.RobotController.getVoltage5V() / 512.;
+        SmartDashboard.putNumber("RoboRio Voltage", voltsPerCM);
+        periodicIO.sensorVoltage = voltSensor/voltsPerCM/30.48/*cm per foot*/;
+        periodicIO.filteredMeasurement = m_filter.calculate(periodicIO.sensorVoltage);
         return periodicIO.filteredMeasurement;
+    }
+
+    public double getDistance()
+    {
+        return periodicIO.sensorDistance;
     }
 
     @Override
     public void readPeriodicInputs()
     {
-        periodicIO.potInFeet = getPotentiometer();
+        if(!skipChecker)
+        {
+            double temp = calculateDistance();
+            SmartDashboard.putNumber("Temp Distance", temp);
+            if(temp < 12.0)
+            {
+                periodicIO.sensorDistance = temp;
+                skipChecker = !skipChecker;
+            }
+        }
+        else
+        {
+            skipChecker = !skipChecker;
+        }
     }
 
     @Override
     public void writePeriodicOutputs()
     {
         // System.out.println("Distance: " + pot.get() / 304.8 + "\n");
-        SmartDashboard.putNumber("Distance", periodicIO.potInFeet);
+        SmartDashboard.putNumber("Distance", periodicIO.sensorDistance);
+        
     }
 
     @Override
     public String toString()
     {
-        return String.format("Ultrasonic %f \n", periodicIO.potInFeet);
+        return String.format("Ultrasonic %f \n", periodicIO.sensorDistance);
     }
 }

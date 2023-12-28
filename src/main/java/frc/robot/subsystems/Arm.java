@@ -481,18 +481,6 @@ public class Arm extends Subsystem4237
     }
 
     @Override
-    public void periodic()
-    {
-        // This method will be called once per scheduler run
-    }
-
-    @Override
-    public void simulationPeriodic()
-    {
-        // This method will be called once per scheduler run during simulation
-    }
-
-    @Override
     public String toString()
     {
         return "Current Arm Position: " + periodicIO.armPosition;

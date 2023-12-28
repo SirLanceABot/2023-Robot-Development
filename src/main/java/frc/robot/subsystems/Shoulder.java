@@ -288,6 +288,11 @@ public class Shoulder extends Subsystem4237
         // DataLogManager.log("Reset Encoder");       
     }
 
+    public void setPositionAfterPinch()
+    {
+        relativeEncoder.setPosition(3500.0);
+    }
+
     public boolean atSetPoint()
     {
         return Math.abs(targetPosition.shoulder - periodicIO.currentPosition) <= threshold;
@@ -352,6 +357,12 @@ public class Shoulder extends Subsystem4237
     public void moveToHighCone()
     {
         targetPosition = TargetPosition.kHighCone;
+    }
+
+    
+    public void moveToHighConeLock()
+    {
+        targetPosition = TargetPosition.kHighConeLock;
     }
 
     /** Moves the shoulder to high position */
@@ -453,6 +464,10 @@ public class Shoulder extends Subsystem4237
         targetPosition = TargetPosition.kOverride;
         overrideMode = OverrideMode.kNotMoving;
         periodicIO.motorSpeed = 0.02;
+        if(periodicIO.currentPosition < 30000)
+        {
+            periodicIO.motorSpeed = 0.0;
+        }
         currentOverridePosition = periodicIO.currentPosition;
     }
 
@@ -631,18 +646,6 @@ public class Shoulder extends Subsystem4237
         //     shoulderMotor.set(periodicIO.motorSpeed);
         // }
         // oldShoulderMotor.set(ControlMode.PercentOutput, motorSpeed);     // TALON FX
-    }
-
-    @Override
-    public void periodic()
-    {
-        // This method will be called once per scheduler run
-    }
-
-    @Override
-    public void simulationPeriodic()
-    {
-        // This method will be called once per scheduler run during simulation
     }
 
     @Override
