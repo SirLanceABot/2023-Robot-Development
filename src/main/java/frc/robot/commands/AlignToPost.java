@@ -15,7 +15,6 @@ import frc.robot.sensors.Gyro4237;
 import frc.robot.sensors.Vision;
 
 
-
 public class AlignToPost extends CommandBase
 {
     // This string gets the full name of the class, including the package name
