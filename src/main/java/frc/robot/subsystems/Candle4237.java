@@ -22,7 +22,7 @@ import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import frc.robot.Constants;
-//Hello my name is robbie
+
 /**
  * Class containing one CANdle
  */

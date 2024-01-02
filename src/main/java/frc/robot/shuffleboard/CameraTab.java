@@ -15,8 +15,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.Shoulder;
 
-    // hello
-    
 public class CameraTab 
 {
     // This string gets the full name of the class, including the package name

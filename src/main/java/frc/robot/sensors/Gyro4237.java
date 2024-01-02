@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 
-// knock knock
 
 public class Gyro4237 extends Sensor4237
 {
